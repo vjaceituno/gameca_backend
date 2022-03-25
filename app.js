@@ -4,11 +4,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const cors = require("cors");
+
 var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/usuarios');
+var usersRouter = require('./routes/users');
 const mongoose = require("mongoose");
 const jwt = require('express-jwt');
-const cors = require("cors");
+
 const Tokens = require("./models/tokens");
 const moment = require('moment-timezone');
 
@@ -21,6 +23,8 @@ const PacienteRouter = require("./routes/pacientes.routes");
 const SignosRouter = require("./routes/signos.routes");
 const ConsultaRouter = require("./routes/consulta.routes");
 const HistorialRouter = require("./routes/historial.routes");
+const ServiciosRouter = require("./routes/servicios.routes");
+const ImagenesRouter = require("./routes/imagenes.routes");
 
 var app = express();
 
@@ -35,8 +39,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 
+// Add a middleware to handle static files in the public directory:
+app.use('/public/upload', express.static(path.resolve('public/upload')));
+
 //mongoose.connect('mongodb://localhost:27017/clinica_gameca', {useNewUrlParser: true,  useUnifiedTopology: true})
-mongoose.connect('mongodb://127.0.0.1:27017/clinica_gameca?gssapiServiceName=mongodb', {useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
+mongoose.connect('mongodb://127.0.0.1:27017/clinicagameca?gssapiServiceName=mongodb', {useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
 .then(() => console.log("Connectado a mongodb"))
 .catch((err) => {
   console.log(err);
@@ -74,15 +81,17 @@ app.use('/', indexRouter);
 
 //Excepciones de token JWT
 app.use(jwt(jwtConfig).unless({
-  path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/vericarsms" },{ url: "/auth/valida" }, { url: "/auth/refreshtoken" }, { url: "/public/upload/" }]
+  path: [{ url: "/auth/login" }, { url: "/auth/logout" }, { url: "/auth/create" }, { url: "/auth/vericarsms" },{ url: "/auth/valida" }, { url: "/auth/refreshtoken" }, { url: "/public/upload/" }, { url: "/auth/req-reset-password" }, { url: "/auth/new-password" }, { url: "/auth/valid-password-token" }]
 }));
 
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 app.use('/auth', AuthRouter);
 app.use('/paciente', PacienteRouter);
 app.use('/signos', SignosRouter);
 app.use('/consulta', ConsultaRouter);
 app.use('/historial', HistorialRouter);
+app.use('/servicios', ServiciosRouter);
+app.use('/imagenes', ImagenesRouter);
 
 
 app.use(function(req, res, next) {

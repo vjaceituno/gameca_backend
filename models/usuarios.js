@@ -19,7 +19,7 @@ const usuarioSchema = new mongoose.Schema({
     password: String,
     fullName: String,
     enabled: { type: Boolean, default: true },
-    roles:   { type: String, enum: ['medico', 'enfermera', 'laboratorio', 'administrador']},
+    roles:   { type: String, enum: ['medico', 'enfermera', 'laboratorio', 'cajero', 'administrador']},
     auth: {
         token: String,
         exp: Date,

@@ -24,13 +24,15 @@ const consultaSchema = new mongoose.Schema({
     lactancia: { type: String },
     visual: { type: String },
     antecovid: { type: String },
-
+    
     examenes: { type: String },
     diagnostico1: { type: String },
     diagnostico2: { type: String },
     plan: { type: String },
     color: { type: String },
     comentario: { type: String },
+    precio: { type: Number },
+    signos: { type: mongoose.Types.ObjectId, ref: 'Signos' },
 
     usuario: { type: mongoose.Types.ObjectId, ref: 'Usuario' },
     
